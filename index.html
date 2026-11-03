@@ -8,15 +8,26 @@
    
 </head>
 <body>
-    <h1 class="titulo">POKEMÓRIA</h1>
+    <img src="titulo.png" alt="Imagem do Jogo da Memória" id="imagem-jogo">
 
-    <div class="placar">Jogadas: <span id="jogadas">0</span></div>
+    <p id="selecao">Escolha a dificuldade</p>
+
+    <div class="jogadas" hidden>Jogadas: <span id="jogadas">0</span></div>
+
+<div class="dificuldade">
+
+    <button class="botao" id="facil">Fácil</button>
+    
+    <button class="botao" id="medio">Médio</button>
+
+    <button class="botao" id="dificil">Difícil</button>
+
+</div> 
+    
 
     <div class="tabuleiro" id="tabuleiro"></div>
-    
-    <button id="iniciar">Iniciar</button>
-    <button id="reiniciar">Reiniciar</button>
 
+    <button id="reiniciar" hidden>Reiniciar</button>
     
     <script src="script.js"></script>
 </body>

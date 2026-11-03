@@ -3,14 +3,23 @@ body {
     font-family: sans-serif;
 }
 
-.titulo {
-    font-family: sans-serif;
-    text-align: center;
-    font-size: 50px;
-    color: purple;
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 450px; 
+
 }
 
-.placar {
+p {
+    
+    text-align: center;
+    font-size: 30px;
+    color: purple;
+    margin-bottom: 20px;
+}
+
+.jogadas {
     text-align: center;
     font-size: 20px;
     color: purple;
@@ -19,7 +28,8 @@ body {
 
 .tabuleiro {
     display: grid;
-    grid-template-columns: repeat(4, 100px);
+    --colunas: 8;
+    grid-template-columns: repeat(var(--colunas), 100px);
     gap: 12px;
     justify-content: center;
 }
@@ -82,7 +92,50 @@ body {
     background-color: #80e678;
 }
 
-#iniciar {
+.dificuldade{
+    text-align: center;
+}
+
+#facil {
+    display: inline-block;
+    margin: 30px auto;
+    padding: 10px 24px;
+    font-size: 16px;
+    background-color: purple;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#medio {
+   
+    display: inline-block;
+    margin: 25px auto;
+    padding: 10px 24px;
+    font-size: 16px;
+    background-color: purple;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#dificil {
+   
+    display: inline-block;
+    margin: 30px auto;
+    padding: 10px 24px;
+    font-size: 16px;
+    background-color: purple;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#reiniciar {
+    
     display: block;
     margin: 25px auto;
     padding: 10px 24px;
@@ -94,18 +147,23 @@ body {
     cursor: pointer;
 }
 
-#reiniciar {
-    display: none;
-    margin: 25px auto;
-    padding: 10px 24px;
-    font-size: 16px;
-    background-color: purple;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
+
+
+
+#facil:hover {
+    background-color: #1fa240;
+}
+#medio:hover {
+    background-color: #1fa240;
+}
+#dificil:hover {
+    background-color: #1fa240;
 }
 
 #reiniciar:hover {
     background-color: #1fa240;
+}
+
+[hidden] {
+    display: none !important;
 }
