@@ -18,6 +18,36 @@ const botaoReiniciar = document.getElementById('reiniciar');
 const botaoFacil = document.getElementById('facil');
 const botaoMedio = document.getElementById('medio');
 const botaoDificil = document.getElementById('dificil');
+const botaoOk = document.getElementById('ok');
+const modal = document.getElementById('sucesso');
+
+function soltarConfete() {
+    const duracao = 2000;
+    const fim = Date.now() + duracao;
+
+    (function frame() {
+        /*canto esquerdo*/
+        confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 60,
+            origin: { x: 0 },
+            zIndex: 2000
+        });
+        /*canto direito*/
+        confetti({
+            particleCount: 5,
+            angle: 120,
+            spread: 60,
+            origin: { x: 1 },
+            zIndex: 2000
+        });
+
+        if (Date.now() < fim) {
+            requestAnimationFrame(frame);
+        }
+    })();
+}
 
 async function obterListaPokemons() {
     if (listaPokemons) return listaPokemons;
@@ -125,6 +155,8 @@ function virarCarta(carta) {
     jogadas++;
     atualizarPlacar();
 
+
+
     if (primeiraCarta.dataset.imagem === segundaCarta.dataset.imagem) {
         primeiraCarta.classList.add('combinada');
         segundaCarta.classList.add('combinada');
@@ -134,12 +166,15 @@ function virarCarta(carta) {
 
         if (paresEncontrados === TOTAL_PARES) {
             setTimeout(function () {
-                alert('Parabéns! Você encontrou todos os Pokémons!');
-                aparecerBotoes();
-            }, 500);
-        }
-
-    } else {
+            modal.showModal();
+            soltarConfete();
+            }, 700);
+        }   
+           
+            
+            
+    }
+    else {
         bloqueado = true;
 
         const a = primeiraCarta;
@@ -250,6 +285,12 @@ botaoDificil.addEventListener('click', function () {
 
     esconderBotoes();
     iniciarJogo();
+});
+
+
+botaoOk.addEventListener('click', function () {
+    modal.close();
+    aparecerBotoes();
 });
 
 

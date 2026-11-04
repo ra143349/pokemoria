@@ -19,6 +19,20 @@ p {
     margin-bottom: 20px;
 }
 
+.p2 {
+    text-align: center;
+    font-size: 30px;
+    color:#F3F4F6;
+    margin-bottom: 20px;
+}
+
+h2 {
+    text-align: center;
+    font-size: 30px;
+    color: #FFCB05;
+    margin-bottom: 20px;
+}
+
 .jogadas {
     text-align: center;
     font-size: 20px;
@@ -147,8 +161,44 @@ p {
     cursor: pointer;
 }
 
+#ok{
+    display: block;
+    margin: 25px auto;
+    padding: 10px 24px;
+    font-size: 16px;
+    background-color: #FFCB05;
+    color: #2A1B40;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
 
 
+#sucesso {
+  border: 3px solid #bf55ec; 
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 400px;
+  width: 85%;
+  background: #2A1B40; 
+  box-shadow: #A855F7; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  
+  
+  transform: scale(0.8) translateY(20px);
+  opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1) 0.3s, 
+   opacity 0.6s ease-in-out 0.3s; 
+  
+            
+}
+
+/* Estado quando o modal abre */
+#sucesso[open] {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
 
 #facil:hover {
     background-color: #1fa240;
@@ -164,6 +214,9 @@ p {
     background-color: #1fa240;
 }
 
+#ok:hover{
+    background-color: #1bf652;
+}
 [hidden] {
     display: none !important;
 }
