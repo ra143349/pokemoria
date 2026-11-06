@@ -3,43 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo da Memoria</title>
+    <title>Jogo da Memória</title>
     <link rel="stylesheet" href="style.css">
-   
 </head>
 <body>
+
     <img src="titulo.png" alt="Imagem do Jogo da Memória" id="imagem-jogo">
 
     <p id="selecao">Escolha a dificuldade</p>
 
-    <div class="jogadas" hidden>Jogadas: <span id="jogadas">0</span></div>
+    <div class="jogadas" hidden>
+        Jogadas: <span id="jogadas">0</span>
+        |
+        Tempo: <span id="tempo">02:30</span>
+    </div>
 
-<div class="dificuldade">
-
-    <button class="botao" id="facil">Fácil</button>
-    
-    <button class="botao" id="medio">Médio</button>
-
-    <button class="botao" id="dificil">Difícil</button>
-
-</div> 
-    
+    <div class="dificuldade">
+        <button class="botao" id="facil">Fácil</button>
+        <button class="botao" id="medio">Médio</button>
+        <button class="botao" id="dificil">Difícil</button>
+    </div>
 
     <div class="tabuleiro" id="tabuleiro"></div>
 
     <button id="reiniciar" hidden>Reiniciar</button>
 
     <dialog id="sucesso">
-
         <h2>Parabéns!</h2>
-        <p class="p2">Você encontrou todos os Pokémons</p>
+        <p class="p2">Você encontrou todos os Pokémons!</p>
         <button id="ok">OK</button>
+    </dialog>
 
+    <dialog id="tempo-esgotado">
+        <h2>Tempo esgotado!</h2>
+        <p class="p2">Você não conseguiu encontrar todos os Pokémons a tempo.</p>
+        <button id="OK-falha">OK</button>
     </dialog>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-    
-    
     <script src="script.js"></script>
+
 </body>
 </html>

@@ -1,16 +1,22 @@
-
 let carregando = false;
 
 let primeiraCarta = null;
 let bloqueado = false;
 let jogadas = 0;
 let paresEncontrados = 0;
+let jogoFinalizado = false;
 
 let listaPokemons = null;
 let TOTAL_PARES = 8;
 
+let inicioCronometro = null;
+let tempoDecorrido = 0;
+let intervaloCronometro = null;
+let tempoLimite = 150000;
+
 const tabuleiro = document.getElementById('tabuleiro');
 const placarJogadas = document.getElementById('jogadas');
+const placarTempo = document.getElementById('tempo');
 const selecao = document.getElementById('selecao');
 const placar = document.querySelector('.jogadas');
 
@@ -19,7 +25,10 @@ const botaoFacil = document.getElementById('facil');
 const botaoMedio = document.getElementById('medio');
 const botaoDificil = document.getElementById('dificil');
 const botaoOk = document.getElementById('ok');
+const botaoTentarNovamente = document.getElementById('tentar-novamente');
+
 const modal = document.getElementById('sucesso');
+const modalTempo = document.getElementById('tempo-esgotado');
 
 function soltarConfete() {
     const duracao = 2000;
@@ -34,6 +43,7 @@ function soltarConfete() {
             origin: { x: 0 },
             zIndex: 2000
         });
+
         /*canto direito*/
         confetti({
             particleCount: 5,
@@ -54,68 +64,24 @@ async function obterListaPokemons() {
 
     const resposta = await fetch('https://pokeapi.co/api/v2/pokemon?limit=100000');
 
-    if (!resposta.ok) {
-        throw new Error('Erro ao buscar a lista de pokemons');
-    }
-
     const dados = await resposta.json();
     listaPokemons = dados.results;
 
     return listaPokemons;
 }
 
-
 async function carregarPokemons() {
     const todos = await obterListaPokemons();
-
     const sorteados = embaralharCarta([...todos]).slice(0, TOTAL_PARES);
 
-    const imagens = await Promise.all(
+    return await Promise.all(
         sorteados.map(async function (pokemon) {
             const resposta = await fetch(pokemon.url);
-
-            if (!resposta.ok) {
-                throw new Error(`Erro ao buscar ${pokemon.name}`);
-            }
-
             const dados = await resposta.json();
-
             return dados.sprites.front_default;
         })
     );
-
-    const imagensValidas = imagens.filter(function (imagem) {
-        return imagem !== null;
-    });
-
-    /*corrigir imagem não carregada*/ 
-    while (imagensValidas.length < TOTAL_PARES) {
-        const restantes = todos.filter(function (pokemon) {
-            return !sorteados.some(function (sorteado) {
-                return sorteado.name === pokemon.name;
-            });
-        });
-
-        const pokemon = embaralharCarta([...restantes])[0];
-
-        const resposta = await fetch(pokemon.url);
-
-        if (!resposta.ok) {
-            continue;
-        }
-
-        const dados = await resposta.json();
-        const imagem = dados.sprites.front_default;
-
-        if (imagem !== null) {
-            imagensValidas.push(imagem);
-            sorteados.push(pokemon);
-        }
-    }
-
-    return imagensValidas;
 }
-
 
 function embaralharCarta(lst) {
     for (let i = lst.length - 1; i > 0; i--) {
@@ -130,18 +96,100 @@ function atualizarPlacar() {
     placarJogadas.textContent = jogadas;
 }
 
+function atualizarCronometro() {
+    let tempo = tempoDecorrido;
+
+    if (inicioCronometro !== null) {
+        tempo += performance.now() - inicioCronometro;
+    }
+
+    let restante = Math.max(0, tempoLimite - tempo);
+
+    let segundosTotais = Math.ceil(restante / 1000);
+    let minutos = Math.floor(segundosTotais / 60);
+    let segundos = segundosTotais % 60;
+
+    placarTempo.textContent =
+        String(minutos).padStart(2, '0') + ':' +
+        String(segundos).padStart(2, '0');
+
+    if (restante <= 30000) {
+        placarTempo.classList.add('tempo-alerta');
+    }
+    else {
+        placarTempo.classList.remove('tempo-alerta');
+    }
+
+    if (restante === 0 && inicioCronometro !== null) {
+        finalizarPorTempo();
+    }
+}
+
+function iniciarCronometro() {
+    if (intervaloCronometro !== null) return;
+
+    inicioCronometro = performance.now();
+
+    atualizarCronometro();
+
+    intervaloCronometro = setInterval(atualizarCronometro, 1000);
+}
+
+function pausarCronometro() {
+    if (intervaloCronometro === null) return;
+
+    tempoDecorrido += performance.now() - inicioCronometro;
+
+    inicioCronometro = null;
+
+    clearInterval(intervaloCronometro);
+    intervaloCronometro = null;
+
+    atualizarCronometro();
+}
+
+function zerarCronometro() {
+    clearInterval(intervaloCronometro);
+
+    intervaloCronometro = null;
+    inicioCronometro = null;
+    tempoDecorrido = 0;
+
+    placarTempo.classList.remove('tempo-alerta');
+
+    atualizarCronometro();
+}
+
+function finalizarPorTempo() {
+    if (jogoFinalizado) return;
+
+    jogoFinalizado = true;
+
+    pausarCronometro();
+
+    modalTempo.showModal();
+}
+
 function resetarEstado() {
     primeiraCarta = null;
     bloqueado = false;
     jogadas = 0;
     paresEncontrados = 0;
+    jogoFinalizado = false;
+
     atualizarPlacar();
+    zerarCronometro();
 }
 
 function virarCarta(carta) {
     if (bloqueado) return;
+    if (jogoFinalizado) return;
     if (carta.classList.contains('virada')) return;
     if (carta.classList.contains('combinada')) return;
+
+    if (primeiraCarta === null && paresEncontrados === 0 && jogadas === 0) {
+        iniciarCronometro();
+    }
 
     carta.classList.add('virada');
 
@@ -155,8 +203,6 @@ function virarCarta(carta) {
     jogadas++;
     atualizarPlacar();
 
-
-
     if (primeiraCarta.dataset.imagem === segundaCarta.dataset.imagem) {
         primeiraCarta.classList.add('combinada');
         segundaCarta.classList.add('combinada');
@@ -165,14 +211,14 @@ function virarCarta(carta) {
         paresEncontrados++;
 
         if (paresEncontrados === TOTAL_PARES) {
+            jogoFinalizado = true;
+            pausarCronometro();
+
             setTimeout(function () {
-            modal.showModal();
-            soltarConfete();
+                modal.showModal();
+                soltarConfete();
             }, 700);
-        }   
-           
-            
-            
+        }
     }
     else {
         bloqueado = true;
@@ -194,49 +240,39 @@ async function iniciarJogo() {
     if (carregando) return;
 
     carregando = true;
+    tabuleiro.innerHTML = '';
+    resetarEstado();
 
-    try {
-        tabuleiro.innerHTML = '';
-        resetarEstado();
+    const imagens = await carregarPokemons();
+    const cartas = embaralharCarta([...imagens, ...imagens]);
 
-        const imagens = await carregarPokemons();
-        const cartas = embaralharCarta([...imagens, ...imagens]);
+    cartas.forEach(function (imagem) {
+        const carta = document.createElement('div');
 
-        cartas.forEach(function (imagem) {
-            const carta = document.createElement('div');
+        carta.classList.add('carta');
+        carta.dataset.imagem = imagem;
 
-            carta.classList.add('carta');
-            carta.dataset.imagem = imagem;
+        carta.innerHTML = `
+            <div class="carta-oculta">?</div>
+            <div class="carta-revelada">
+                <img src="${imagem}" alt="PokÃ©mon">
+            </div>
+        `;
 
-            carta.innerHTML = `
-                <div class="carta-oculta">?</div>
-                <div class="carta-revelada">
-                    <img src="${imagem}" alt="Pokémon">
-                </div>
-            `;
-
-            carta.addEventListener('click', function () {
-                virarCarta(carta);
-            });
-
-            tabuleiro.appendChild(carta);
+        carta.addEventListener('click', function () {
+            virarCarta(carta);
         });
 
-    } catch (erro) {
-        console.error(erro);
-        tabuleiro.textContent = 'Não foi possível carregar os Pokémons. Tente novamente.';
-    } finally {
-        carregando = false;
-    }
+        tabuleiro.appendChild(carta);
+    });
+
+    carregando = false;
 }
-
-
 
 function esconderBotoes() {
     botaoFacil.hidden = true;
     botaoMedio.hidden = true;
     botaoDificil.hidden = true;
-
 
     botaoReiniciar.hidden = false;
     placar.hidden = false;
@@ -252,20 +288,17 @@ function aparecerBotoes() {
     placar.hidden = true;
     selecao.hidden = false;
 
-    placar
-
     tabuleiro.innerHTML = '';
 
     resetarEstado();
 }
-
-
 
 botaoReiniciar.addEventListener('click', aparecerBotoes);
 
 botaoFacil.addEventListener('click', function () {
     tabuleiro.style.setProperty('--colunas', 4);
     TOTAL_PARES = 8;
+    tempoLimite = 150000;
 
     esconderBotoes();
     iniciarJogo();
@@ -274,6 +307,7 @@ botaoFacil.addEventListener('click', function () {
 botaoMedio.addEventListener('click', function () {
     tabuleiro.style.setProperty('--colunas', 6);
     TOTAL_PARES = 18;
+    tempoLimite = 240000;
 
     esconderBotoes();
     iniciarJogo();
@@ -282,15 +316,18 @@ botaoMedio.addEventListener('click', function () {
 botaoDificil.addEventListener('click', function () {
     tabuleiro.style.setProperty('--colunas', 8);
     TOTAL_PARES = 32;
+    tempoLimite = 480000;
 
     esconderBotoes();
     iniciarJogo();
 });
-
 
 botaoOk.addEventListener('click', function () {
     modal.close();
     aparecerBotoes();
 });
 
-
+botaoTentarNovamente.addEventListener('click', function () {
+    modalTempo.close();
+    aparecerBotoes();
+});

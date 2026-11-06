@@ -7,12 +7,10 @@ img {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 450px; 
-
+    width: 450px;
 }
 
 p {
-    
     text-align: center;
     font-size: 30px;
     color: purple;
@@ -22,7 +20,7 @@ p {
 .p2 {
     text-align: center;
     font-size: 30px;
-    color:#F3F4F6;
+    color: #F3F4F6;
     margin-bottom: 20px;
 }
 
@@ -38,6 +36,15 @@ h2 {
     font-size: 20px;
     color: purple;
     margin-bottom: 20px;
+}
+
+#tempo {
+    font-variant-numeric: tabular-nums;
+}
+
+#tempo.tempo-alerta {
+    color: red;
+    font-weight: bold;
 }
 
 .tabuleiro {
@@ -106,37 +113,13 @@ h2 {
     background-color: #80e678;
 }
 
-.dificuldade{
+.dificuldade {
     text-align: center;
 }
 
-#facil {
-    display: inline-block;
-    margin: 30px auto;
-    padding: 10px 24px;
-    font-size: 16px;
-    background-color: purple;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-#medio {
-   
-    display: inline-block;
-    margin: 25px auto;
-    padding: 10px 24px;
-    font-size: 16px;
-    background-color: purple;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
+#facil,
+#medio,
 #dificil {
-   
     display: inline-block;
     margin: 30px auto;
     padding: 10px 24px;
@@ -148,20 +131,8 @@ h2 {
     cursor: pointer;
 }
 
-#reiniciar {
-    
-    display: block;
-    margin: 25px auto;
-    padding: 10px 24px;
-    font-size: 16px;
-    background-color: purple;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-#ok{
+#reiniciar,
+#OK-falha {
     display: block;
     margin: 25px auto;
     padding: 10px 24px;
@@ -173,50 +144,49 @@ h2 {
     cursor: pointer;
 }
 
-
-#sucesso {
-  border: 3px solid #bf55ec; 
-  border-radius: 20px;
-  padding: 32px;
-  max-width: 400px;
-  width: 85%;
-  background: #2A1B40; 
-  box-shadow: #A855F7; 
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-align: center;
-  
-  
-  transform: scale(0.8) translateY(20px);
-  opacity: 0;
-  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1) 0.3s, 
-   opacity 0.6s ease-in-out 0.3s; 
-  
-            
+#ok {
+    display: block;
+    margin: 25px auto;
+    padding: 10px 24px;
+    font-size: 16px;
+    background-color: #FFCB05;
+    color: #2A1B40;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-/* Estado quando o modal abre */
-#sucesso[open] {
-  transform: scale(1) translateY(0);
-  opacity: 1;
+#sucesso,
+#tempo-esgotado {
+    border: 3px solid #bf55ec;
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 400px;
+    width: 85%;
+    background: #2A1B40;
+    box-shadow: 0 0 15px #A855F7;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
 }
 
-#facil:hover {
+#sucesso::backdrop,
+#tempo-esgotado::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+#facil:hover,
+#medio:hover,
+#dificil:hover,
+#reiniciar:hover,
+
+#OK-falha:hover {
     background-color: #1fa240;
 }
-#medio:hover {
-    background-color: #1fa240;
-}
-#dificil:hover {
-    background-color: #1fa240;
-}
 
-#reiniciar:hover {
-    background-color: #1fa240;
-}
-
-#ok:hover{
+#ok:hover {
     background-color: #1bf652;
 }
+
 [hidden] {
     display: none !important;
 }
