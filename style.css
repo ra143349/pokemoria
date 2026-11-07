@@ -132,7 +132,7 @@ h2 {
 }
 
 #reiniciar,
-#OK-falha {
+#tentar-novamente {
     display: block;
     margin: 25px auto;
     padding: 10px 24px;
@@ -179,7 +179,7 @@ h2 {
 #dificil:hover,
 #reiniciar:hover,
 
-#OK-falha:hover {
+#tentar-novamente:hover {
     background-color: #1fa240;
 }
 
