@@ -72,15 +72,56 @@ async function obterListaPokemons() {
 
 async function carregarPokemons() {
     const todos = await obterListaPokemons();
-    const sorteados = embaralharCarta([...todos]).slice(0, TOTAL_PARES);
+    const sorteados = embaralharCarta([...todos]);
 
-    return await Promise.all(
-        sorteados.map(async function (pokemon) {
-            const resposta = await fetch(pokemon.url);
-            const dados = await resposta.json();
-            return dados.sprites.front_default;
-        })
-    );
+    const imagens = [];
+    let indice = 0;
+
+    while (imagens.length < TOTAL_PARES && indice < sorteados.length) {
+        const lote = sorteados.slice(indice, indice + 16);
+        indice += 16;
+
+        const resultados = await Promise.all(
+            lote.map(async function (pokemon) {
+                try {
+                    const resposta = await fetch(pokemon.url);
+
+                    if (!resposta.ok) return null;
+
+                    const dados = await resposta.json();
+                    const imagem = dados.sprites.front_default;
+
+                    if (imagem && await verificarImagem(imagem)) {
+                        return imagem;
+                    }
+
+                    return null;
+                }
+                catch {
+                    return null;
+                }
+            })
+        );
+
+        imagens.push(
+            ...resultados
+                .filter(imagem => imagem !== null)
+                .slice(0, TOTAL_PARES - imagens.length)
+        );
+    }
+
+    return imagens;
+}
+
+function verificarImagem(url) {
+    return new Promise(function (resolve) {
+        const img = new Image();
+
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+
+        img.src = url;
+    });
 }
 
 function embaralharCarta(lst) {
