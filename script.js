@@ -30,6 +30,80 @@ const botaoTentarNovamente = document.getElementById('tentar-novamente');
 const modal = document.getElementById('sucesso');
 const modalTempo = document.getElementById('tempo-esgotado');
 
+const musicaMenu = new Audio('./musicas/menu.mp3');
+const musicaPartida = new Audio('./musicas/partida.mp3');
+const musicaFinal = new Audio('./musicas/final.mp3');
+const musicaVitoria = new Audio('./musicas/vitoria.mp3');
+const musicaDerrota = new Audio('./musicas/derrota.mp3');
+
+musicaMenu.loop = true;
+musicaPartida.loop = true;
+musicaFinal.loop = true;
+
+musicaMenu.volume = 0.3;
+musicaPartida.volume = 0.3;
+musicaFinal.volume = 0.3;
+musicaVitoria.volume = 0.4;
+musicaDerrota.volume = 0.4;
+
+let musicaFinalAtiva = false;
+
+function reproduzirMusica(musica) {
+    musica.play()
+}
+
+function pararTodasMusicas() {
+    const musicas = [
+        musicaMenu,
+        musicaPartida,
+        musicaFinal,
+        musicaVitoria,
+        musicaDerrota
+    ];
+
+    musicas.forEach(function (musica) {
+        musica.pause();
+        musica.currentTime = 0;
+    });
+
+    musicaFinalAtiva = false;
+}
+
+function iniciarMusicaMenu() {
+    pararTodasMusicas();
+    reproduzirMusica(musicaMenu);
+}
+
+function iniciarMusicaPartida() {
+    pararTodasMusicas();
+    reproduzirMusica(musicaPartida);
+}
+
+function iniciarMusicaFinal() {
+    if (musicaFinalAtiva || jogoFinalizado) return;
+
+    musicaFinalAtiva = true;
+
+    musicaPartida.pause();
+    reproduzirMusica(musicaFinal);
+}
+
+function tocarMusicaVitoria() {
+    pararTodasMusicas();
+    reproduzirMusica(musicaVitoria);
+}
+
+function tocarMusicaDerrota() {
+    pararTodasMusicas();
+    reproduzirMusica(musicaDerrota);
+}
+
+document.addEventListener('click', function () {
+    if (!botaoFacil.hidden) {
+        iniciarMusicaMenu();
+    }
+}, true);
+
 function soltarConfete() {
     const duracao = 2000;
     const fim = Date.now() + duracao;
@@ -156,6 +230,7 @@ function atualizarCronometro() {
 
     if (restante <= 30000) {
         placarTempo.classList.add('tempo-alerta');
+        iniciarMusicaFinal();
     }
     else {
         placarTempo.classList.remove('tempo-alerta');
@@ -207,6 +282,7 @@ function finalizarPorTempo() {
     jogoFinalizado = true;
 
     pausarCronometro();
+    tocarMusicaDerrota();
 
     modalTempo.showModal();
 }
@@ -254,6 +330,7 @@ function virarCarta(carta) {
         if (paresEncontrados === TOTAL_PARES) {
             jogoFinalizado = true;
             pausarCronometro();
+            tocarMusicaVitoria();
 
             setTimeout(function () {
                 modal.showModal();
@@ -296,7 +373,7 @@ async function iniciarJogo() {
         carta.innerHTML = `
             <div class="carta-oculta">?</div>
             <div class="carta-revelada">
-                <img src="${imagem}" alt="PokÃ©mon">
+                <img src="${imagem}" alt="Pokémon">
             </div>
         `;
 
@@ -321,6 +398,8 @@ function esconderBotoes() {
 }
 
 function aparecerBotoes() {
+    iniciarMusicaMenu();
+
     botaoFacil.hidden = false;
     botaoMedio.hidden = false;
     botaoDificil.hidden = false;
@@ -342,6 +421,7 @@ botaoFacil.addEventListener('click', function () {
     tempoLimite = 150000;
 
     esconderBotoes();
+    iniciarMusicaPartida();
     iniciarJogo();
 });
 
@@ -351,6 +431,7 @@ botaoMedio.addEventListener('click', function () {
     tempoLimite = 240000;
 
     esconderBotoes();
+    iniciarMusicaPartida();
     iniciarJogo();
 });
 
@@ -360,6 +441,7 @@ botaoDificil.addEventListener('click', function () {
     tempoLimite = 480000;
 
     esconderBotoes();
+    iniciarMusicaPartida();
     iniciarJogo();
 });
 
