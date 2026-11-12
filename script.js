@@ -12,7 +12,7 @@ let TOTAL_PARES = 8;
 let inicioCronometro = null;
 let tempoDecorrido = 0;
 let intervaloCronometro = null;
-let tempoLimite = 150000;
+let tempoLimite = 60000;
 
 const tabuleiro = document.getElementById('tabuleiro');
 const placarJogadas = document.getElementById('jogadas');
@@ -418,7 +418,7 @@ botaoReiniciar.addEventListener('click', aparecerBotoes);
 botaoFacil.addEventListener('click', function () {
     tabuleiro.style.setProperty('--colunas', 4);
     TOTAL_PARES = 8;
-    tempoLimite = 150000;
+    tempoLimite = 60000;
 
     esconderBotoes();
     iniciarMusicaPartida();
@@ -428,7 +428,7 @@ botaoFacil.addEventListener('click', function () {
 botaoMedio.addEventListener('click', function () {
     tabuleiro.style.setProperty('--colunas', 6);
     TOTAL_PARES = 18;
-    tempoLimite = 240000;
+    tempoLimite = 120000;
 
     esconderBotoes();
     iniciarMusicaPartida();
@@ -438,7 +438,7 @@ botaoMedio.addEventListener('click', function () {
 botaoDificil.addEventListener('click', function () {
     tabuleiro.style.setProperty('--colunas', 8);
     TOTAL_PARES = 32;
-    tempoLimite = 480000;
+    tempoLimite = 180000;
 
     esconderBotoes();
     iniciarMusicaPartida();
